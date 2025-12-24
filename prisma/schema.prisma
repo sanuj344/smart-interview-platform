@@ -1,0 +1,63 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+enum Role {
+  ADMIN
+  INTERVIEWER
+  CANDIDATE
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role
+  createdAt DateTime @default(now())
+
+  interviewerSlots        TimeSlot[]   @relation("InterviewerSlots")
+  candidateInterviews    Interview[]  @relation("Candidate")
+  interviewerInterviews  Interview[]  @relation("Interviewer")
+}
+
+model TimeSlot {
+  id            Int      @id @default(autoincrement())
+  interviewerId Int
+  startTime     DateTime
+  endTime       DateTime
+  isBooked      Boolean  @default(false)
+
+  interviewer User       @relation("InterviewerSlots", fields: [interviewerId], references: [id])
+  interview   Interview?
+}
+
+model Interview {
+  id            Int      @id @default(autoincrement())
+  candidateId   Int
+  interviewerId Int
+  slotId        Int      @unique
+  roundType     String
+  status        String
+
+  candidate   User      @relation("Candidate", fields: [candidateId], references: [id])
+  interviewer User      @relation("Interviewer", fields: [interviewerId], references: [id])
+  slot        TimeSlot  @relation(fields: [slotId], references: [id])
+  feedback    Feedback?
+}
+
+model Feedback {
+  id          Int    @id @default(autoincrement())
+  interviewId Int    @unique
+  techScore   Int
+  commScore   Int
+  notes       String
+
+  interview Interview @relation(fields: [interviewId], references: [id])
+}
