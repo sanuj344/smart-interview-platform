@@ -10,4 +10,25 @@ router.post(
   bookInterview
 );
 
+router.get(
+  "/mine",
+  authMiddleware(["INTERVIEWER"]),
+  async (req, res) => {
+    const interviews = await require("../prismaClient").interview.findMany({
+      where: { interviewerId: req.user.id },
+      include: {
+        slot: true,
+        candidate: { select: { name: true, email: true } },
+      },
+      orderBy: { id: "desc" },
+    });
+
+    res.json(interviews);
+  }
+);
+
+
+
+
+
 module.exports = router;

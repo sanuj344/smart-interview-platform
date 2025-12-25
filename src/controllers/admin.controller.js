@@ -1,20 +1,35 @@
 const prisma = require("../prismaClient");
 
-// Average scores per interviewer
-const interviewerAnalytics = async (req, res) => {
+const getAnalytics = async (req, res) => {
   try {
-    const data = await prisma.feedback.groupBy({
-      by: ["interviewId"],
+    const totalInterviews = await prisma.interview.count();
+
+    const completedInterviews = await prisma.interview.count({
+      where: { status: "COMPLETED" },
+    });
+
+    const scheduledInterviews = await prisma.interview.count({
+      where: { status: "SCHEDULED" },
+    });
+
+    const avgScores = await prisma.feedback.aggregate({
       _avg: {
         techScore: true,
         commScore: true,
       },
     });
 
-    res.json(data);
+    res.json({
+      total: totalInterviews,
+      completed: completedInterviews,
+      scheduled: scheduledInterviews,
+      avgTech: avgScores._avg.techScore || 0,
+      avgComm: avgScores._avg.commScore || 0,
+    });
   } catch (err) {
-    res.status(500).json({ message: "Failed to fetch analytics" });
+    console.error(err);
+    res.status(500).json({ message: "Failed to load analytics" });
   }
 };
 
-module.exports = { interviewerAnalytics };
+module.exports = { getAnalytics };

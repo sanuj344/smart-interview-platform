@@ -9,5 +9,31 @@ router.post(
   authMiddleware(["INTERVIEWER"]),
   createSlot
 );
+// Candidate: get available slots
+router.get(
+  "/available",
+  authMiddleware(["CANDIDATE"]),
+  async (req, res) => {
+    const slots = await require("../prismaClient").timeSlot.findMany({
+      where: { isBooked: false },
+      orderBy: { startTime: "asc" },
+    });
+    res.json(slots);
+  }
+);
+
+router.get(
+  "/mine",
+  authMiddleware(["INTERVIEWER"]),
+  async (req, res) => {
+    const slots = await require("../prismaClient").timeSlot.findMany({
+      where: { interviewerId: req.user.id },
+      orderBy: { startTime: "asc" },
+    });
+    res.json(slots);
+  }
+);
+
+
 
 module.exports = router;

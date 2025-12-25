@@ -25,7 +25,7 @@ export default function CandidateDashboard() {
 
   const bookSlot = async (slotId) => {
     try {
-      await api.post("/interviews", {
+      await api.post("/interviews/book", {
         slotId,
         roundType: "Technical",
       });
