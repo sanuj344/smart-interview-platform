@@ -1,152 +1,101 @@
-🎯 Smart Interview Platform
+# Smart Interview Platform
 
-A full-stack interview scheduling and feedback platform that enables candidates to book interviews, interviewers to manage availability and submit structured feedback, and admins to view analytics — all in one system.
+A full-stack web application that streamlines interview scheduling, structured feedback collection, and interview analytics using role-based access control.
 
-🚀 What Problem Does This Solve?
+---
 
-Interview coordination is often manual, fragmented, and inefficient.
+## Overview
 
-This platform solves:
+The Smart Interview Platform solves the problem of inefficient and manual interview coordination. It provides a centralized system where candidates can book interviews, interviewers can manage availability and submit feedback, and administrators can monitor interview performance through analytics.
 
-❌ Back-and-forth scheduling emails
+---
 
-❌ No structured feedback system
+## Features
 
-❌ Poor visibility into interview performance
+### Candidate
+- View available interview slots
+- Book interviews in real time
+- Prevent double booking of interview slots
 
-By providing:
+### Interviewer
+- Create and manage availability slots
+- View scheduled interviews
+- Submit structured interview feedback through a dedicated form
+- Prevent feedback resubmission once completed
 
-Centralized scheduling
+### Admin
+- View overall interview statistics
+- Track scheduled and completed interviews
+- Analyze average technical and communication scores
+- Review recent interview feedback
 
-Role-based dashboards
+---
 
-Structured feedback & analytics
+## Technology Stack
 
-🧠 Core Features
-👤 Candidate
+### Frontend
+- React (Vite)
+- React Router
+- Axios
+- Tailwind CSS
 
-View available interview slots
+### Backend
+- Node.js
+- Express.js
+- Prisma ORM
+- JWT Authentication
 
-Book interviews in real time
+### Database
+- PostgreSQL (Neon)
 
-Prevent double booking
+### Deployment
+- Frontend deployed on Vercel
+- Backend deployed on Render
+- Database hosted on Neon (managed PostgreSQL)
 
-🎤 Interviewer
+---
 
-Create and manage availability slots
+## Authentication and Authorization
 
-View assigned interviews
+- JWT-based authentication
+- Role-based access control (Candidate, Interviewer, Admin)
+- Protected routes on both frontend and backend
+- Secure authorization middleware
 
-Submit structured feedback via a dedicated form
+  
+---
 
-Feedback cannot be resubmitted once completed
+## Application Flow
 
-🛠 Admin
+1. Interviewer creates availability slots  
+2. Candidate books an available slot  
+3. Interview appears in interviewer dashboard  
+4. Interviewer submits structured feedback  
+5. Interview status updates to completed  
+6. Admin dashboard reflects updated analytics  
 
-View interview statistics
+---
 
-Track completed vs scheduled interviews
+## Data Integrity and Safety
 
-Analyze average technical & communication scores
+- Slot overlap prevention
+- One feedback submission per interview
+- Server-side validation
+- Password hashing using bcrypt
+- Secure environment variable usage
 
-View recent interview feedback
+---
 
-🧱 Tech Stack
-Frontend
+## Local Setup
 
-React (Vite)
+### Backend Setup
 
-React Router
+```bash
+cd backend
+npm install
+npx prisma generate
+npx prisma migrate dev
+npm run dev
 
-Axios
 
-Tailwind CSS
 
-Backend
-
-Node.js
-
-Express.js
-
-Prisma ORM
-
-JWT Authentication
-
-Database
-
-PostgreSQL (Neon)
-
-Deployment
-
-Frontend: Vercel
-
-Backend: Render
-
-Database: Neon (Managed PostgreSQL)
-
-🔐 Authentication & Authorization
-
-JWT-based authentication
-
-Role-based access control
-
-CANDIDATE
-
-INTERVIEWER
-
-ADMIN
-
-Protected routes on frontend and backend
-
-🗂 Project Structure (Simplified)
-frontend/
- ├── auth/
- ├── pages/
- │   ├── candidate/
- │   ├── interviewer/
- │   └── admin/
- ├── layouts/
- └── api/
-
-backend/
- ├── controllers/
- ├── routes/
- ├── middleware/
- ├── prisma/
- └── server.js
-
-⚙️ Key Design Decisions
-
-Environment variables for DB and secrets (no hardcoding)
-
-Prisma migrations for safe schema changes
-
-Dedicated feedback form instead of browser prompts
-
-Single shared database across environments
-
-Centralized layout management for scalability
-
-🧪 Sample Workflow
-
-Interviewer creates time slots
-
-Candidate books an available slot
-
-Interview appears in interviewer dashboard
-
-Interviewer submits feedback
-
-Interview status becomes COMPLETED
-
-Admin dashboard updates analytics automatically
-
-🛡 Data Integrity & Safety
-
-Slot overlap prevention
-
-One interview → one feedback submission
-
-Validation on both frontend & backend
-
-Secure password hashing using bcrypt
