@@ -7,6 +7,7 @@ import CandidateDashboard from "./pages/candidate/CandidateDashboard";
 import InterviewerDashboard from "./pages/interviewer/InterviewerDashboard";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 
+import SubmitFeedback from "./pages/interviewer/SubmitFeedback";
 
 
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -40,6 +41,14 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+<Route
+  path="/interviewer/feedback/:interviewId"
+  element={
+    <ProtectedRoute roles={["INTERVIEWER"]}>
+      <SubmitFeedback />
+    </ProtectedRoute>
+  }
+/>
 
          
 
