@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import api from "../../api/api";
 import AppLayout from "../../layouts/AppLayout";
+import Toast from "../../components/Toast";
 
 export default function CandidateDashboard() {
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [toast, setToast] = useState(null);
 
   useEffect(() => {
     fetchSlots();
@@ -29,20 +31,34 @@ export default function CandidateDashboard() {
         slotId,
         roundType: "Technical",
       });
-      alert("Interview booked successfully");
+      setToast({
+        message: "Interview booked successfully! A confirmation email has been sent to you.",
+        type: "success"
+      });
       fetchSlots();
     } catch (err) {
-      alert(err.response?.data?.message || "Booking failed");
+      setToast({
+        message: err.response?.data?.message || "Booking failed",
+        type: "error"
+      });
     }
   };
 
   return (
     <AppLayout>
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-semibold">Book an Interview</h1>
         <p className="text-gray-600 mt-1">
-          Select an available time slot
+          Select an available time slot. You will receive a confirmation email after booking.
         </p>
       </div>
 

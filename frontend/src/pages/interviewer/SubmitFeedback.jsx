@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../../api/api";
 import AppLayout from "../../layouts/AppLayout";
+import Toast from "../../components/Toast";
 
 export default function SubmitFeedback() {
   const { interviewId } = useParams();
@@ -12,6 +13,7 @@ export default function SubmitFeedback() {
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [toast, setToast] = useState(null);
 
   const submit = async () => {
     setError("");
@@ -30,7 +32,15 @@ export default function SubmitFeedback() {
         notes,
       });
 
-      navigate("/interviewer");
+      setToast({
+        message: "Feedback submitted successfully! The candidate has been notified via email.",
+        type: "success"
+      });
+
+      // Navigate after a short delay to show the toast
+      setTimeout(() => {
+        navigate("/interviewer");
+      }, 2000);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to submit feedback");
     } finally {
@@ -40,10 +50,22 @@ export default function SubmitFeedback() {
 
   return (
     <AppLayout>
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+
       <div className="max-w-xl mx-auto bg-white p-6 rounded shadow">
         <h1 className="text-2xl font-semibold mb-6">
           Submit Interview Feedback
         </h1>
+
+        <p className="text-sm text-gray-600 mb-4">
+          The candidate will be notified by email once you submit the feedback.
+        </p>
 
         {error && (
           <div className="bg-red-50 text-red-600 p-3 rounded mb-4">

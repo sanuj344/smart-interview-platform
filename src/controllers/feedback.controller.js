@@ -1,4 +1,6 @@
 const prisma = require("../prismaClient");
+const { sendEmail } = require("../utils/emailService");
+const { getFeedbackSubmittedTemplate } = require("../utils/emailTemplates");
 
 // INTERVIEWER submits feedback
 const submitFeedback = async (req, res) => {
@@ -43,6 +45,23 @@ const submitFeedback = async (req, res) => {
       where: { id: interviewId },
       data: { status: "COMPLETED" },
     });
+
+    // Fetch full interview data for emails
+    const fullInterview = await prisma.interview.findUnique({
+      where: { id: interviewId },
+      include: {
+        candidate: true,
+        interviewer: true,
+      },
+    });
+
+    // Send email to candidate asynchronously
+    const template = getFeedbackSubmittedTemplate(
+      fullInterview.candidate.name,
+      fullInterview.interviewer.name,
+      fullInterview.roundType
+    );
+    sendEmail(fullInterview.candidate.email, template.subject, template.html);
 
     res.status(201).json(feedback);
   } catch (err) {

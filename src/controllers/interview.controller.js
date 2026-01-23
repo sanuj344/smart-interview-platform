@@ -1,4 +1,6 @@
 const prisma = require("../prismaClient");
+const { sendEmail } = require("../utils/emailService");
+const { getInterviewBookedTemplate } = require("../utils/emailTemplates");
 
 const bookInterview = async (req, res) => {
   const candidateId = req.user.id;
@@ -38,6 +40,33 @@ const bookInterview = async (req, res) => {
 
       return interview;
     });
+
+    // Fetch full interview data for emails
+    const fullInterview = await prisma.interview.findUnique({
+      where: { id: result.id },
+      include: {
+        candidate: true,
+        interviewer: true,
+        slot: true,
+      },
+    });
+
+    // Send emails asynchronously (don't wait)
+    const candidateTemplate = getInterviewBookedTemplate(
+      fullInterview.candidate.name,
+      fullInterview.interviewer.name,
+      fullInterview.slot.startTime,
+      fullInterview.roundType
+    );
+    sendEmail(fullInterview.candidate.email, candidateTemplate.subject, candidateTemplate.html);
+
+    const interviewerTemplate = getInterviewBookedTemplate(
+      fullInterview.interviewer.name,
+      fullInterview.interviewer.name, // Self notification
+      fullInterview.slot.startTime,
+      fullInterview.roundType
+    );
+    sendEmail(fullInterview.interviewer.email, interviewerTemplate.subject, interviewerTemplate.html);
 
     res.status(201).json(result);
   } catch (error) {
